@@ -9,8 +9,8 @@ class GHError(Exception):
 
 class GH:
     def __init__(self, org="eurekarobotics", repo="eureka", verbose = False):
-        self._org = "eurekarobotics"
-        self._repo = "eureka"
+        self._org = org
+        self._repo = repo
         self._verbose = verbose
 
         self.def_opts = [
