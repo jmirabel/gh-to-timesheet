@@ -23,11 +23,14 @@ class GH:
     def basereq(self):
         return f"repos/{self._org}/{self._repo}"
 
+    def repo_api(self, what: str, options: T.List[str] = []):
+        return self.api(f"{self.basereq}/{what}", options)
+
     def api(self, what: str, options: T.List[str] = []):
         opt_str = " ".join(self.def_opts + options)
         if self._verbose:
-            print(f"gh api {opt_str} {self.basereq}/{what}")
-        ostream = os.popen(f"gh api {opt_str} {self.basereq}/{what}")
+            print(f"gh api {opt_str} {what}")
+        ostream = os.popen(f"gh api {opt_str} {what}")
         output = ostream.read()
         try:
             data = json.loads(output)
@@ -38,10 +41,19 @@ class GH:
         return data
 
     def pulls(self, options: T.List[str] = []):
-        return self.api("pulls", options)
+        return self.repo_api("pulls", options)
+
+    def issues(self, options: T.List[str] = []):
+        return self.repo_api("issues", options)
+
+    def search_issues(self, options: T.List[str] = []):
+        return self.api("/search/issues", [ "-X", "GET" ] + options)
     
     def pull(self, number: T.Union[int,str]):
-        return self.api(f"pulls/{number}")
+        return self.repo_api(f"pulls/{number}")
 
+    def issue(self, number: T.Union[int,str], options: T.List[str] = []):
+        return self.repo_api(f"issues/{number}", options)
+    
     def pull_commits(self, number: T.Union[int,str]):
-        return self.api(f"pulls/{number}/commits")
+        return self.repo_api(f"pulls/{number}/commits")
