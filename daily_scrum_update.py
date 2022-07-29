@@ -1,14 +1,16 @@
 import sys
+import argparse
 import gh_to_timesheet.gh
 import gh_to_timesheet.timesheet
 import dateutil.parser
 
-username="jmirabel"
-if len(sys.argv) > 2:
-    print("Usage: daily_scrum_update.py [username]")
-    sys.exit(1)
-elif len(sys.argv) == 2:
-    username = sys.argv[1]
+parser = argparse.ArgumentParser()
+parser.add_argument("username", help="Github username", default="jmirabel", nargs="?", type=str)
+parser.add_argument("--prs", help="list PRs in the today's work section.", action="store_true")
+
+args = parser.parse_args()
+
+username=args.username
 
 gh_ek = gh_to_timesheet.gh.GH()
 gh_dm = gh_to_timesheet.gh.GH(repo="deep_models")
@@ -22,7 +24,7 @@ See previously
 """)
 
 print("# What I work on today")
-show_pulls = False
+show_pulls = args.prs
 pr_with_review_request = []
 for gh in (gh_ek, gh_dm):
     print(f"\nIssues ({gh._repo}):")
